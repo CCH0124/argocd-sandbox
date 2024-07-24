@@ -1,0 +1,77 @@
+crds:
+  install: true
+global:
+  domain: argo.cch.com
+  logging:
+    format: json
+    level: info
+
+configs:
+  cm:
+    create: true
+    exec.enabled: false
+    admin.enabled: true
+    statusbadge.enabled: true
+  params:
+    create: true
+    otlp.address: ''
+    server.insecure: false
+    server.basehref: /argocd
+    server.rootpath: '/argocd'
+    server.staticassets: /shared/app
+    server.disable.auth: false
+    server.enable.gzip: true
+    server.x.frame.options: sameorigin
+  rbac:
+    create: true
+    policy.default: ''
+    policy.csv: ''
+    scopes: "[groups]"
+    policy.matchMode: "glob"
+
+redis-ha:
+  enabled: true
+
+controller:
+  replicas: 1
+
+server:
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+  extensions:
+    # -- Enable support for Argo CD extensions
+    enabled: false
+    extensionList: []
+    #  - name: extension-metrics
+    #    env:
+    #      - name: EXTENSION_URL
+    #        value: https://github.com/argoproj-labs/argocd-extension-metrics/releases/download/v1.0.0/extension.tar.gz
+    #      - name: EXTENSION_CHECKSUM_URL
+    #        value: https://github.com/argoproj-labs/argocd-extension-metrics/releases/download/v1.0.0/extension_checksums.txt
+  certificate:
+    enabled: false
+
+  # TLS certificate configuration via Secret
+  ingress:
+    enabled: true
+    ingressClassName: "nginx"
+    paths:
+      - /argocd
+    pathType: Prefix
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      kubernetes.io/tls-acme: "true"
+    tls:
+      - secretName: argocd-secret # # do not change, this is provided by Argo CD
+        hosts:
+          - argo.cch.com
+repoServer:
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+
+applicationSet:
+  replicaCount: 1
