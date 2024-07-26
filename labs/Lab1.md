@@ -250,10 +250,10 @@ $ argocd proj set team-a --allow-namespaced-resource=*/ServiceAccount --allow-na
 
 ![](images/Lab-1-quarkus-app-kubernetes-yaml-2.png)
 
-透過 `app get` 指令，可以看到當前部署上去的應用程式狀態。像是 `Health Status` 健康狀態、部署至哪個 Kubernetes 集群等。
+透過 `app get` 指令，可以看到當前部署上去的應用程式狀態。像是 `Health Status` 健康狀態、部署至哪個 Kubernetes 集群等。`--show-operation` 會再把 ArgoCD 同步資訊詳細列出，像是 `Operation`、`Sync Revision`、`Phase` 等欄位。
 
 ```bash
-$ argocd app get argo/quarkus-simple-app
+$ argocd app get argo/quarkus-simple-app --show-operation
 Name:               argo/quarkus-simple-app
 Project:            team-a
 Server:             k3d-dev-cluster
@@ -268,6 +268,14 @@ Sync Policy:        Manual
 Sync Status:        Synced to main (385b096)
 Health Status:      Healthy
 
+Operation:          Sync
+Sync Revision:      385b0966397f824d6ba839e21ff02512f38ced98
+Phase:              Succeeded
+Start:              2024-07-24 23:50:17 +0800 CST
+Finished:           2024-07-24 23:50:17 +0800 CST
+Duration:           0s
+Message:            successfully synced (all tasks run)
+
 GROUP  KIND            NAMESPACE  NAME        STATUS  HEALTH   HOOK  MESSAGE
        ServiceAccount  team-a     simple-app  Synced                 serviceaccount/simple-app unchanged
        Service         team-a     simple-app  Synced  Healthy        service/simple-app unchanged
@@ -278,6 +286,13 @@ apps   Deployment      team-a     simple-app  Synced  Healthy        deployment.
 
 - apps/ReplicaSet 
 - */Pod
+
+Application 對於 ArgoCD 來說是對應 Application CRD 因此透過 `kubectl` 指令也是可以獲取資訊，如下。
+```bash
+$ kubectl get application -A -owide
+NAMESPACE   NAME                 SYNC STATUS   HEALTH STATUS   REVISION
+argo        quarkus-simple-app   Synced        Healthy         385b0966397f824d6ba839e21ff02512f38ced98
+```
 
 到這邊基本上可以透過 ArgoCD 建立一個應用程式讓 ArgoCD 管理。下面部分會針對 ArgoCD 的 Application 進行探討。
 

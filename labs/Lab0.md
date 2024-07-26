@@ -276,6 +276,7 @@ export TOKEN=$(kubectl get -n kube-system secret/argocd-admin-token -o jsonpath=
 5. 至 ArgoCD 的 Server 位置，建置 Secret 資源
 
 在建立 Cluster 資訊給 ArgoCD 時，每個 Secret 資源，必須有標籤 `argocd.argoproj.io/secret-type: cluster`。
+
 ```bash
 cat <<EOF |  kubectl -n argo apply --context k3d-argo-cluster  -f -
 apiVersion: v1
@@ -294,12 +295,14 @@ stringData:
     {
       "bearerToken": "$TOKEN",
       "tlsClientConfig": {
-        "serverName": "k3d-stage-cluster",
+        "insecure": false,
         "caData": "$CA"
       }
     }
 EOF
 ```
+
+這邊 `insecure` 設置為 false 表示不做 TLS 驗證，`serverName` 部分不做設定，實務上應當設定，因該藉由 `serverName` 來做 TLS 的驗證，他應當是 SNI 的值。
 
 關於配置的參數官方描述的很詳細，可參考官方資源[ArgoCD | clusters](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters)。
 
