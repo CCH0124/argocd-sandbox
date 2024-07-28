@@ -1,7 +1,9 @@
 ## Lab2
-- 聲明式設定
-- 範例 ArgoCD Project、Application、Repositories、Cluster 資源
-- Self-Managed ArgoCD 
+1. 聲明式設定
+2. 範例 ArgoCD Project、Application、Repositories、Cluster 資源
+3. Self-Managed ArgoCD 
+4. Sync Option
+
 
 ## Declarative 宣告式聲明
 
@@ -476,6 +478,34 @@ spec:
 
 ![](images/Lab2-argocd-self.png)
 
+## Sync Option
+
+除了確定 Application 資源是否為自動或手動同步之外，ArgoCD 還可以配置為執行自訂操作，即透過 `.spec.syncPolicy.syncOptions` 欄位將所需狀態同步到目標 Kubernetes 上。
+
+`syncOptions` 配置有以下
+
+- Validate
+  - 預設為 `true`
+  - 預設下，ArgoCD 使用 Kubernetes API 進行驗證，如果 YAML 檔案是無效，同步操作將失敗，這相當於執行 `kubectl apply --validate=false`
+- ApplyOutOfSyncOnly
+  - 預設下，ArgoCD 管理 Application 的每個物件。如果有成千上萬的物件，這可能會帶來問題。此配置僅同步或套用狀態為不同步的物件即與 Git 倉庫中的配置不一致
+- CreateNamespace
+  - 用於建立 namespace 資源，如果該 namespace 尚未存在於目標 kubernetes 上
+- PrunePropagationPolicy
+  - 預設是 foreground 
+  - 此配置決定 Application 資源如何處理資源的修剪/刪除，即垃圾收集。其它可用選項為 `background` 和 `orphan`
+- PruneLast
+  - 此配置可在其它資源部署並且為健康狀態後以及所有其他 `wave` 成功完成之後，將資源修剪作為同步操作的最後一部分
+- Replace
+  - 預設下，ArgoCD 與 kubectl 等效。當物件太大而無法放入 `kubectl.kubernetes.io/last-applied-configuration` 註解時，有時會出現問題。
+  - 此配置可能很危險，需謹慎使用
+- ServerSideApply
+  - 此配置允許 ArgoCD 在執行同步操作時使用伺服器端。這相當於運行 `kubectl apply --server-side`，詳細可參閱 [Kubernetes server-side-apply](https://kubernetes.io/docs/reference/using-api/server-side-apply/)
+  - 大多數時候，由於此選項用於應用變更增量，因此 `Validate=false` 選項經常與此選項結合使用
+- FailOnSharedResource
+  - 此配置只要 ArgoCD 發現與已透過另一個 Appliction 資源在叢集中應用的  Appliction 關聯的資源，就會將該 Appliction 資源標記為「失敗」
+- RespectIgnoreDifferences
+  - 預設情況下，ArgoCD 使用 `.spec.ignoreDifferences` 中的 `ignoreDifferences` 配置，僅用於計算即時狀態和所需狀態之間的差異，但仍套用 Git 中定義的物件。此配置在同步操作期間也會考慮到這些差異
 
 ## 結論
 

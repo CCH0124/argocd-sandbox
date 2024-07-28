@@ -305,7 +305,7 @@ argo        quarkus-simple-app   Synced        Healthy         385b0966397f824d6
 - 每三分鐘輪循一次 Git 儲存庫
   - `timeout.reconciliation` 值可來變更設定
 - Automatic pruning(自動修剪)
-  - 安全機制，預設下當 Argo CD 偵測到資源不再 Git 中定義時，自動同步不會刪除資源
+  - 預設情況下，當 ArgoCD 偵測到該資源在 Git 中不再可用時，不會刪除(修剪)任何資源，且該資源將處於 `OutOfSync` 狀態。如果想讓 ArgoCD 刪除這些資源，須設定此值
   - 要將不再使用資源進行移除時，可以手動進行同步並選擇修剪 (prune)
 - Automatic Allow-Empty(允許空資源)
 - Automatic Self-Healing(自動修復)
