@@ -158,6 +158,8 @@ for i in [dev, stage]
 
 好處是未來只要新增一個團隊至 `list` 產生器下的 `elements` 欄位，並在 `kustomizes/namespace-config/overlays/` 下目錄也配置對應團隊的 `namespace` 配置，這樣就可以再多集群靈活部署。同樣當新增一個 prd 集群給 team-b、team-c 使用時，也會同時建立相對應的 `namespace` 資源。
 
+最後要注意的是 `matrix` 產生器最多使用兩層產生器，無法 `matrix` 中帶 `matrix`。
+
 ## clusters 產生器範例
 
 這邊目標是希望 dev/stage 和 prd 環境能夠安裝 nginx ingress controller，因次設計了使用 `clusters` 產生器的 `ApplicationSet` 應用。
