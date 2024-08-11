@@ -302,7 +302,12 @@ stringData:
 EOF
 ```
 
-這邊 `insecure` 設置為 false 表示不做 TLS 驗證，`serverName` 部分不做設定，實務上應當設定，因該藉由 `serverName` 來做 TLS 的驗證，他應當是 SNI 的值。
+這邊 `insecure` 設置為 false 表示不做 TLS 驗證，`serverName` 部分不做設定，實務上應當設定，因該藉由 `serverName` 來做 TLS 的驗證，他應當是 SNI 的值。`namespaces` 限制了兩個 `namespace`，因此這之外的資源，Argo CD 理論上是沒有辦法進行資源部署，會出現以下可能訊息。
+
+```bash
+ComparisonError
+Failed to load live state: Namespace "team-c" for LimitRange "stage-limit-team-c" is not managed
+```
 
 關於配置的參數官方描述的很詳細，可參考官方資源[ArgoCD | clusters](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#clusters)。
 
