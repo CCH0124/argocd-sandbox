@@ -9,9 +9,15 @@ global:
 configs:
   cm:
     create: true
-    exec.enabled: false
+    exec.enabled: true
     admin.enabled: true
     statusbadge.enabled: true
+    exec.shells: "bash,sh"
+    accounts.devuser: login
+    accounts.pmuser: login
+    accounts.opsuser: login
+    accounts.devuser1: login
+    accounts.devuser1.enabled: "false"
   params:
     create: true
     otlp.address: ''
@@ -24,8 +30,30 @@ configs:
     server.x.frame.options: sameorigin
   rbac:
     create: true
-    policy.default: ''
-    policy.csv: ''
+    policy.default: role:readonly
+    policy.csv: |
+      p, role:dev, applications, *,  team-a-project/*, allow
+      p, role:dev, projects, get,  team-a-project, allow
+      p, role:dev, repositories, get,  *, allow
+      p, role:dev, clusters, get,  *, allow
+      g, devuser, role:dev
+      
+      p, role:pm, applications, get,  */*, allow
+      p, role:pm, projects, get,  *, allow
+      p, role:pm, repositories, get,  *, allow
+      p, role:pm, clusters, get,  *, allow
+      g, pmuser, role:pm
+
+      p, role:op, applications, *,  */*, allow
+      p, role:op, projects, *,  *, allow
+      p, role:op, repositories, *,  *, allow
+      p, role:op, clusters, *,  *, allow
+      p, role:op, accounts, *,  *, allow
+      p, role:op, certificates, *,  *, allow
+      p, role:op, gpgkeys, *,  *, allow
+      p, role:op, exec, create, */*, allow
+      g, opsuser, role:op
+
     scopes: "[groups]"
     policy.matchMode: "glob"
 
