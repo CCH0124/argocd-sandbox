@@ -28,6 +28,8 @@ configs:
     server.disable.auth: false
     server.enable.gzip: true
     server.x.frame.options: sameorigin
+    # -- Enables [Applications in any namespace]
+    application.namespaces: team-*
   rbac:
     create: true
     policy.default: role:readonly
