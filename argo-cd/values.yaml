@@ -34,7 +34,8 @@ configs:
     create: true
     policy.default: role:readonly
     policy.csv: |
-      p, role:dev, applications, *,  team-a-project/*, allow
+      p, role:dev, applications, get,  team-a-project/simple-app, allow
+      p, role:dev, applications, *,  team-b-project/team-b/*, allow
       p, role:dev, projects, get,  team-a-project, allow
       p, role:dev, repositories, get,  *, allow
       p, role:dev, clusters, get,  *, allow
