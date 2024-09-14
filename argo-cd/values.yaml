@@ -106,3 +106,41 @@ repoServer:
 
 applicationSet:
   replicaCount: 1
+
+# notifications:
+#   notifiers:
+#     service.telegram: |
+#       token: $telegram-token
+#   triggers:
+#     trigger.on-deployed: |
+#       - when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+#         oncePer: app.status.sync.revision
+#         send: [tg-template]
+#     trigger.on-sync-status-error: |
+#       - when: app.status.operationState.phase in ['Error', 'Failed']
+#         send: [tg-template]
+#     trigger.on-sync-status-running: |
+#       - when: app.status.operationState.phase in ['Running'] # trigger condition
+#         oncePer: app.status.sync.revision
+#         send: [tg-template] # template name
+#     trigger.on-sync-status-unknown: |
+#       - when: app.status.sync.status == 'Unknown'
+#         send: [app-sync-status] 
+#   templates:
+#     template.tg-template: |
+#       message: |
+#         Application {{.app.metadata.name}} sync is {{.app.status.sync.status}}.
+#         Health Status: {{.app.status.health.status}}
+#         Operation State Phase: {{.app.status.operationState.phase}}
+#         Project: {{.app.spec.project}}
+#         Revisions: {{.app.status.sync.revisions}}
+#         Synced at: {{.app.status.operationState.finishedAt}}
+#         Sync Initiator: {{.app.status.operationState.operation.initiatedBy}}
+#         Application details: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}.
+#     template.on-sync-status-unknown: |
+#       message: |
+#         Author: {{(call .repo.GetCommitMetadata .app.status.sync.revision).Author}}
+#         Commit Message: {{(call .repo.GetCommitMetadata .app.status.sync.revision).Message }}
+#   secret:
+#     items: 
+#       telegram-token: xxxxxxxxxxxxxxxxxxxxxx
